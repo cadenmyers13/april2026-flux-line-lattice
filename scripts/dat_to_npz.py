@@ -9,21 +9,39 @@ def parse_dat(filepath):
     metadata = {}
 
     with open(filepath, "r") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            if line.startswith("#"):
-                meta_line = line.lstrip("#").strip()
-                if meta_line:
-                    metadata.setdefault("comments", []).append(meta_line)
-            else:
-                values = [float(v) for v in line.split()]
-                data_rows.append(values)
+        lines = f.readlines()
 
-    data = np.array(data_rows)
-    # Transpose to fix axes orientation
-    data = data.T
+    i = 0
+    while i < len(lines):
+        line = lines[i].strip()
+
+        if not line:
+            i += 1
+            continue
+
+        if line.startswith("#"):
+            meta_line = line.lstrip("#").strip()
+
+            # Detect the sample_field/sample_temp header
+            if meta_line.startswith("rot") and "sample_field" in meta_line:
+                # Next line contains the values
+                values_line = lines[i + 1].lstrip("#").strip()
+                values = [float(v) for v in values_line.split()]
+
+                metadata["sample_field"] = values[3]
+                metadata["sample_temp"] = values[4]
+
+                i += 2
+                continue
+
+            metadata.setdefault("comments", []).append(meta_line)
+        else:
+            values = [float(v) for v in line.split()]
+            data_rows.append(values)
+
+        i += 1
+
+    data = np.array(data_rows).T
     return data, metadata
 
 
@@ -33,9 +51,23 @@ def convert_dat_to_npz(input_path, output_dir):
     output_dir.mkdir(parents=True, exist_ok=True)
 
     data, metadata = parse_dat(input_path)
-    output_path = output_dir / (input_path.stem + ".npz")
+
+    # Extract and round values
+    field = metadata.get("sample_field", None)
+    temp = metadata.get("sample_temp", None)
+
+    if field is not None and temp is not None:
+        field_str = f"{np.abs(field):.1f}"
+        temp_str = f"{temp:.1f}"
+        suffix = f"_{field_str}T_{temp_str}K"
+    else:
+        suffix = ""
+
+    output_path = output_dir / (input_path.stem + suffix + ".npz")
+
     comments = np.array(metadata.get("comments", []))
     np.savez(output_path, data=data, comments=comments)
+
     print(f"Saved {data.shape} array to {output_path}")
     return output_path
 

@@ -11,9 +11,9 @@ def load_data(npz_path: Path):
         return npz["data"]
 
 
-def interactive_plot(file1: Path, file2: Path, log=True):
-    data1 = load_data(file1)
-    data2 = load_data(file2)
+def interactive_plot(data_file: Path, bkgd: Path, log=True):
+    data1 = load_data(data_file)
+    data2 = load_data(bkgd)
 
     if data1.shape != data2.shape:
         raise ValueError(f"Shape mismatch: {data1.shape} vs {data2.shape}")
@@ -50,7 +50,7 @@ def interactive_plot(file1: Path, file2: Path, log=True):
     slider_scale = Slider(ax_scale, "Scale", 0.0, 20.0, valinit=scale0, valstep=0.01)
 
     if log:
-        slider_zmin = Slider(ax_zmin, "zmin", 0, 5, valinit=zmin0)
+        slider_zmin = Slider(ax_zmin, "zmin", 0.001, 5, valinit=zmin0)
         slider_zmax = Slider(ax_zmax, "zmax", 10, 5*10**2, valinit=zmax0)
     else:
         slider_zmin = Slider(ax_zmin, "zmin", -1.0, 1.0, valinit=0.0)
@@ -87,8 +87,8 @@ def interactive_plot(file1: Path, file2: Path, log=True):
 def main():
     parser = argparse.ArgumentParser(description="Interactive subtraction with sliders")
 
-    parser.add_argument("file1", help="Minuend (.npz)")
-    parser.add_argument("file2", help="Subtrahend (.npz)")
+    parser.add_argument("data_file", help="Minuend (.npz)")
+    parser.add_argument("bkgd", help="Subtrahend (.npz)")
 
     # NEW: default is log, flag switches to linear
     parser.add_argument("--linear", action="store_true",
@@ -96,17 +96,24 @@ def main():
 
     args = parser.parse_args()
 
-    file1 = Path(args.file1)
-    file2 = Path(args.file2)
-
-    if not file1.is_file():
-        print(f"File not found: {file1}")
+    data_file = Path(args.data_file)
+    bkgd = Path(args.bkgd)
+    data_file_metadata = np.load(data_file)["comments"]
+    print(f"metadata for{data_file.stem}:")
+    print("-" * 40)
+    print(data_file_metadata)
+    bkgd_metadata = np.load(bkgd)["comments"]
+    print(f"metadata for {bkgd.stem}:")
+    print("-" * 40)
+    print(bkgd_metadata)
+    if not data_file.is_file():
+        print(f"File not found: {data_file}")
         return
-    if not file2.is_file():
-        print(f"File not found: {file2}")
+    if not bkgd.is_file():
+        print(f"File not found: {bkgd}")
         return
 
-    interactive_plot(file1, file2, log=not args.linear)
+    interactive_plot(data_file, bkgd, log=not args.linear)
 
 
 if __name__ == "__main__":

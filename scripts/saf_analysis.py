@@ -28,7 +28,7 @@ def main():
     saf = sc.symmetry_adapted_filter(0, dp_shape)
     plt.imshow(masked_norm_dp)#, norm=LogNorm())
     plt.show()
-    # angle_range = np.arange(15, 60, 1)
+    # angle_range = np.arange(-30, 31, 1)
     overlap = sc.calculate_single_overlap_score(masked_dp,)# angle_range_deg=angle_range)
     # get args max index of the overlap
     overlap_max_idx = np.argmax(overlap)
