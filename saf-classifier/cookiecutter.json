@@ -1,0 +1,8 @@
+{
+  "project_name": "saf-classifier",
+  "github_username_or_orgname": "cadenmyers13",
+  "github_repo_name": "saf-classifier",
+  "conda_pypi_package_dist_name": "saf-classifier",
+  "package_dir_name": "saf_classifier",
+  "contributors": "Caden Myers"
+}
