@@ -73,15 +73,11 @@ def make_overlap_demo_gif(n_folds, resolution, array, save_location=None):
         print(f"gif saved to {gif_filename}")
 
 
-def plot_normalized_overlap_score(
-    n_folds, resolution, array, angle_range=None
-):
+def plot_normalized_overlap_score(n_folds, resolution, array, angle_range=None):
     array_norm = normalize_min_max(array)
     imshape = array_norm.shape
     sc = SAFClassifier(resolution, n_folds, threshold=0)
-    angle_range = (
-        np.arange(0, 360 / n_folds, 1) if angle_range is None else angle_range
-    )
+    angle_range = np.arange(0, 360 / n_folds, 1) if angle_range is None else angle_range
     overlap_scores = []
     for ang in angle_range:
         angle_rad = np.deg2rad(ang)
@@ -90,9 +86,7 @@ def plot_normalized_overlap_score(
         overlap_scores.append(overlap_val)
     overlap_scores = np.array(overlap_scores)
     overlap_scores_normalized = overlap_scores - overlap_scores.min()
-    plt.plot(
-        angle_range, overlap_scores_normalized, label=f"n_folds={n_folds}"
-    )
+    plt.plot(angle_range, overlap_scores_normalized, label=f"n_folds={n_folds}")
 
 
 def main():
@@ -112,14 +106,10 @@ def main():
         for n_folds in [1, 2, 3, 4, 5, 6]:
             ang_range = np.arange(-360 / (2 * n_folds), 360 / (2 * n_folds), 1)
             # make_overlap_demo_gif(n_folds, 3, tif_im, data_dir)
-            plot_normalized_overlap_score(
-                n_folds, 3, tif_im, angle_range=ang_range
-            )
+            plot_normalized_overlap_score(n_folds, 3, tif_im, angle_range=ang_range)
         plt.legend()
         plt.xlabel("SAF orientation angle (degrees)")
-        plt.ylabel(
-            r"Normalized Overlap Score ($\mathcal{O}-\mathcal{O}_\text{min}$)"
-        )
+        plt.ylabel(r"Normalized Overlap Score ($\mathcal{O}-\mathcal{O}_\text{min}$)")
         plt.tight_layout()
         plt.savefig(
             f"{data_dir.parent}/overlaps-nfolds-plot.png",

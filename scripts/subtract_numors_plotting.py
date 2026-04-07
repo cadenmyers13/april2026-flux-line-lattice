@@ -52,8 +52,12 @@ def main():
     )
     parser.add_argument("file1", help="First .npz file")
     parser.add_argument("file2", help="Second .npz file")
-    parser.add_argument("--zmin", type=float, default=1, help="Minimum z-axis (log scale)")
-    parser.add_argument("--zmax", type=float, default=None, help="Maximum z-axis (log scale)")
+    parser.add_argument(
+        "--zmin", type=float, default=1, help="Minimum z-axis (log scale)"
+    )
+    parser.add_argument(
+        "--zmax", type=float, default=None, help="Maximum z-axis (log scale)"
+    )
 
     args = parser.parse_args()
 

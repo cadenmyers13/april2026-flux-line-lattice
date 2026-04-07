@@ -3,6 +3,7 @@ import argparse
 from pathlib import Path
 import sys
 
+
 # 5.3 x 4.1 mm pixel shape
 def parse_dat(filepath):
     data_rows = []
@@ -107,10 +108,11 @@ def main():
     parser.add_argument(
         "input",
         nargs="+",
-        help="Path(s) to input .dat file, directory, wildcard, or comma-separated list of files"
+        help="Path(s) to input .dat file, directory, wildcard, or comma-separated list of files",
     )
     parser.add_argument(
-        "-o", "--output-dir",
+        "-o",
+        "--output-dir",
         default=Path.cwd(),
         help="Output directory (default: current working directory)",
     )

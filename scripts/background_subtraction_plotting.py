@@ -44,14 +44,14 @@ def interactive_plot(data_file: Path, bkgd: Path, log=True):
 
     # Sliders
     ax_scale = plt.axes([0.15, 0.22, 0.7, 0.03])
-    ax_zmin  = plt.axes([0.15, 0.16, 0.7, 0.03])
-    ax_zmax  = plt.axes([0.15, 0.10, 0.7, 0.03])
+    ax_zmin = plt.axes([0.15, 0.16, 0.7, 0.03])
+    ax_zmax = plt.axes([0.15, 0.10, 0.7, 0.03])
 
     slider_scale = Slider(ax_scale, "Scale", 0.0, 20.0, valinit=scale0, valstep=0.01)
 
     if log:
         slider_zmin = Slider(ax_zmin, "zmin", 0.001, 5, valinit=zmin0)
-        slider_zmax = Slider(ax_zmax, "zmax", 10, 5*10**2, valinit=zmax0)
+        slider_zmax = Slider(ax_zmax, "zmax", 10, 5 * 10**2, valinit=zmax0)
     else:
         slider_zmin = Slider(ax_zmin, "zmin", -1.0, 1.0, valinit=0.0)
         slider_zmax = Slider(ax_zmax, "zmax", 0.0, 10.0, valinit=1.0)
@@ -91,8 +91,9 @@ def main():
     parser.add_argument("bkgd", help="Subtrahend (.npz)")
 
     # NEW: default is log, flag switches to linear
-    parser.add_argument("--linear", action="store_true",
-                        help="Use linear scale instead of log")
+    parser.add_argument(
+        "--linear", action="store_true", help="Use linear scale instead of log"
+    )
 
     args = parser.parse_args()
 

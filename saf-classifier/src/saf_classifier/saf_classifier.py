@@ -96,9 +96,7 @@ class SAFClassifier:
         center_x = self.cx if self.cx is not None else imshape[1] // 2
         center_y = self.cy if self.cy is not None else imshape[0] // 2
 
-        x_grid, y_grid = np.meshgrid(
-            np.arange(imshape[1]), np.arange(imshape[0])
-        )
+        x_grid, y_grid = np.meshgrid(np.arange(imshape[1]), np.arange(imshape[0]))
         x_rel = x_grid - center_x
         y_rel = y_grid - center_y
         theta = np.arctan2(y_rel, x_rel)
@@ -112,9 +110,7 @@ class SAFClassifier:
             angles = np.arange(0, 2 * np.pi / self.n_folds, angle_step_rad)
         else:
             angles = np.deg2rad(angle_range_deg)
-        saf_list = [
-            self.symmetry_adapted_filter(angle, imshape) for angle in angles
-        ]
+        saf_list = [self.symmetry_adapted_filter(angle, imshape) for angle in angles]
         self._saf_stack = np.stack(saf_list, axis=0)
         self._saf_shape = imshape
 
@@ -183,7 +179,7 @@ class SAFClassifier:
         image : ndarray
             Input image for overlap score calculation.
         angle_range_deg : list or ndarray, optional
-            The specific angles in degrees to calculate the overlap score over. 
+            The specific angles in degrees to calculate the overlap score over.
             If None, uses default range based on n_folds and angle_step.
 
         Returns
@@ -238,9 +234,7 @@ class SAFClassifier:
         elif self.classification_type == "max":
             classification_value = np.max(score)
         else:
-            raise ValueError(
-                "Invalid classification_type. Choose 'range' or 'max'."
-            )
+            raise ValueError("Invalid classification_type. Choose 'range' or 'max'.")
 
         if classification_value >= self.threshold:
             classification = "crystalline"
@@ -264,9 +258,7 @@ class SAFClassifier:
         img = Image.open(filepath)
         return np.array(img)
 
-    def classify_tiff_files(
-        self, filepaths, inner_radius=None, outer_radius=None
-    ):
+    def classify_tiff_files(self, filepaths, inner_radius=None, outer_radius=None):
         """Classify a list of TIFF files as 'crystalline' or 'amorphous'.
 
         Overlap scores are calculated and normalized globally across all
@@ -315,9 +307,7 @@ class SAFClassifier:
         self.overlap_scores = []
 
         for overlap in normalized_overlap_scores:
-            classification, classif_value = (
-                self.classify_single_overlap_scores(overlap)
-            )
+            classification, classif_value = self.classify_single_overlap_scores(overlap)
             self.classifications.append(classification)
             self.classification_values.append(classif_value)
             self.overlap_scores.append(overlap)
@@ -350,9 +340,7 @@ class SAFClassifier:
 
         print(f"\nTotal images classified: {len(self.filenames)}")
 
-        n_crystalline = sum(
-            1 for c in self.classifications if c == "crystalline"
-        )
+        n_crystalline = sum(1 for c in self.classifications if c == "crystalline")
         n_amorphous = sum(1 for c in self.classifications if c == "amorphous")
 
         print(
@@ -427,8 +415,7 @@ class SAFClassifier:
             return
 
         colors = [
-            "blue" if cls == "crystalline" else "red"
-            for cls in self.classifications
+            "blue" if cls == "crystalline" else "red" for cls in self.classifications
         ]
 
         plt.figure(figsize=figsize)
@@ -467,8 +454,7 @@ class SAFClassifier:
             return
 
         colors = [
-            "blue" if cls == "crystalline" else "red"
-            for cls in self.classifications
+            "blue" if cls == "crystalline" else "red" for cls in self.classifications
         ]
 
         plt.figure(figsize=figsize)
@@ -517,16 +503,12 @@ class SAFClassifier:
         # Separate values by classification
         crystalline_values = [
             val
-            for val, cls in zip(
-                self.classification_values, self.classifications
-            )
+            for val, cls in zip(self.classification_values, self.classifications)
             if cls == "crystalline"
         ]
         amorphous_values = [
             val
-            for val, cls in zip(
-                self.classification_values, self.classifications
-            )
+            for val, cls in zip(self.classification_values, self.classifications)
             if cls == "amorphous"
         ]
 
@@ -587,8 +569,7 @@ class SAFClassifier:
         # Overlap scores
         ax1 = fig.add_subplot(gs[0, :])
         colors = [
-            "blue" if cls == "crystalline" else "red"
-            for cls in self.classifications
+            "blue" if cls == "crystalline" else "red" for cls in self.classifications
         ]
         for scores, color in zip(self.overlap_scores, colors):
             ax1.plot(scores, color=color, alpha=0.3)
@@ -613,9 +594,7 @@ class SAFClassifier:
             alpha=0.7,
             s=100,
         )
-        ax2.axhline(
-            y=self.threshold, color="black", linestyle="--", linewidth=2
-        )
+        ax2.axhline(y=self.threshold, color="black", linestyle="--", linewidth=2)
         ax2.set_xlabel("Image Index")
         ax2.set_ylabel("Classification Value")
         ax2.set_title(f"Classification Scatter\n(threshold={self.threshold})")
@@ -625,16 +604,12 @@ class SAFClassifier:
         ax3 = fig.add_subplot(gs[1, 1])
         crystalline_values = [
             val
-            for val, cls in zip(
-                self.classification_values, self.classifications
-            )
+            for val, cls in zip(self.classification_values, self.classifications)
             if cls == "crystalline"
         ]
         amorphous_values = [
             val
-            for val, cls in zip(
-                self.classification_values, self.classifications
-            )
+            for val, cls in zip(self.classification_values, self.classifications)
             if cls == "amorphous"
         ]
         ax3.hist(
@@ -653,9 +628,7 @@ class SAFClassifier:
             label="Amorphous",
             edgecolor="black",
         )
-        ax3.axvline(
-            x=self.threshold, color="black", linestyle="--", linewidth=2
-        )
+        ax3.axvline(x=self.threshold, color="black", linestyle="--", linewidth=2)
         ax3.set_xlabel("Classification Value")
         ax3.set_ylabel("Count")
         ax3.set_title("Value Distribution")

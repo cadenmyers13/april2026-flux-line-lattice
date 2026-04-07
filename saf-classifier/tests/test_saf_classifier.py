@@ -129,9 +129,7 @@ def test_apply_annular_mask_stack(basic_classifier):
 def test_apply_annular_mask_custom_center(basic_classifier):
     """Test annular masking with custom center."""
     image = np.ones((100, 100)) * 100
-    masked = basic_classifier.apply_annular_mask(
-        image, outer_radius=10, cx=30, cy=40
-    )
+    masked = basic_classifier.apply_annular_mask(image, outer_radius=10, cx=30, cy=40)
     # Center at (40, 30) should be masked
     assert masked[40, 30] == 0
     # Default center (50, 50) should not be masked
@@ -149,9 +147,7 @@ def test_calculate_single_overlap_score_rgb_image(basic_classifier):
 
 def test_calculate_normalized_overlap_scores(basic_classifier, sample_images):
     """Test normalized overlap scores for image stack."""
-    norm_scores = basic_classifier.calculate_normalized_overlap_scores(
-        sample_images
-    )
+    norm_scores = basic_classifier.calculate_normalized_overlap_scores(sample_images)
     # Should return normalized scores
     assert norm_scores.shape[0] == len(sample_images)
     assert norm_scores.ndim == 2
@@ -189,9 +185,7 @@ def test_classify_single_overlap_scores(
         classification_type=classification_type,
     )
 
-    classification, value = classifier.classify_single_overlap_scores(
-        score_array
-    )
+    classification, value = classifier.classify_single_overlap_scores(score_array)
 
     assert classification == expected_classification
     if classification_type == "range":
@@ -234,9 +228,7 @@ def test_classify_tiff_files_dict(basic_classifier, temp_tiff_files):
 
 def test_classify_tiff_files_with_mask(basic_classifier, temp_tiff_files):
     """Test classification with annular masking."""
-    results = basic_classifier.classify_tiff_files(
-        temp_tiff_files, outer_radius=30
-    )
+    results = basic_classifier.classify_tiff_files(temp_tiff_files, outer_radius=30)
     # Should still produce results
     assert len(results["classifications"]) == len(temp_tiff_files)
 
@@ -326,19 +318,14 @@ def test_classify_tiff_files(tmp_path):
         resolution=5.0, n_folds=4, threshold=0.5, classification_type="range"
     )
     # Classify
-    results = classifier.classify_tiff_files(
-        [crystalline_path, amorphous_path]
-    )
+    results = classifier.classify_tiff_files([crystalline_path, amorphous_path])
     assert len(results["classifications"]) == 2
     assert results["filenames"][0] == "crystalline.tif"
     assert results["filenames"][1] == "amorphous.tif"
     assert results["classifications"][0] == "crystalline"
     assert results["classifications"][1] == "amorphous"
     # Crystalline should have higher classification value
-    assert (
-        results["classification_values"][0]
-        > results["classification_values"][1]
-    )
+    assert results["classification_values"][0] > results["classification_values"][1]
 
 
 @pytest.mark.parametrize(
@@ -350,9 +337,7 @@ def test_classify_tiff_files(tmp_path):
         ("max", 0.8),
     ],
 )
-def test_different_classification_parameters(
-    tmp_path, classification_type, threshold
-):
+def test_different_classification_parameters(tmp_path, classification_type, threshold):
     """Test classification with different parameters."""
     # Create simple test image
     img = np.random.rand(50, 50)
