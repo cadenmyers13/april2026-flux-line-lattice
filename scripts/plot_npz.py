@@ -3,12 +3,17 @@ import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
+import pprint
 
 
 def plot_npz_file(npz_path: Path, zmin: float, zmax: float):
-    with np.load(npz_path) as npz:
+    with np.load(npz_path, allow_pickle=True) as npz:
         data = npz["data"]
-
+        metadata = npz["metadata"].item()
+    print()
+    print(f"Numor title: '{metadata.get('title', npz_path.stem)}'")
+    print("-" * 40)
+    pprint.pprint(metadata)
     plt.figure(figsize=(6, 5))
     data_norm = data + 1e-10  # Shift to avoid log(0)
     plt.imshow(

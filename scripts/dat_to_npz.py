@@ -8,11 +8,14 @@ import sys
 def parse_dat(filepath):
     data_rows = []
     metadata = {}
+    comments = []
 
     with open(filepath, "r") as f:
         lines = f.readlines()
 
     i = 0
+    title_set = False
+
     while i < len(lines):
         line = lines[i].strip()
 
@@ -23,19 +26,32 @@ def parse_dat(filepath):
         if line.startswith("#"):
             meta_line = line.lstrip("#").strip()
 
-            # Detect the sample_field/sample_temp header
-            if meta_line.startswith("rot") and "sample_field" in meta_line:
-                # Next line contains the values
-                values_line = lines[i + 1].lstrip("#").strip()
-                values = [float(v) for v in values_line.split()]
-
-                metadata["sample_field"] = values[3]
-                metadata["sample_temp"] = values[4]
-
-                i += 2
+            # First metadata line → title
+            if not title_set:
+                metadata["title"] = meta_line
+                title_set = True
+                i += 1
                 continue
 
-            metadata.setdefault("comments", []).append(meta_line)
+            # Try structured key-value parsing
+            keys = meta_line.split()
+
+            if i + 1 < len(lines) and lines[i + 1].startswith("#"):
+                next_line = lines[i + 1].lstrip("#").strip()
+                values_str = next_line.split()
+
+                try:
+                    values = [float(v) for v in values_str]
+                    if len(keys) == len(values):
+                        for k, v in zip(keys, values):
+                            metadata[k] = v
+                        i += 2
+                        continue
+                except ValueError:
+                    pass
+
+            comments.append(meta_line)
+
         else:
             values = [float(v) for v in line.split()]
             data_rows.append(values)
@@ -43,6 +59,8 @@ def parse_dat(filepath):
         i += 1
 
     data = np.array(data_rows).T
+    metadata["comments"] = comments
+
     return data, metadata
 
 
@@ -67,8 +85,11 @@ def convert_dat_to_npz(input_path, output_dir):
     output_path = output_dir / (input_path.stem + suffix + ".npz")
 
     comments = np.array(metadata.get("comments", []))
-    np.savez(output_path, data=data, comments=comments)
-
+    np.savez(
+        output_path,
+        data=data,
+        metadata=np.array(metadata, dtype=object)
+    )
     print(f"Saved {data.shape} array to {output_path}")
     return output_path
 
