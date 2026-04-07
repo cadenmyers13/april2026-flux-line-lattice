@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 import sys
 
-
+# 5.3 x 4.1 mm pixel shape
 def parse_dat(filepath):
     data_rows = []
     metadata = {}
@@ -27,7 +27,7 @@ def parse_dat(filepath):
     return data, metadata
 
 
-def dat_to_npz(input_path, output_dir):
+def convert_dat_to_npz(input_path, output_dir):
     input_path = Path(input_path)
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -92,7 +92,7 @@ def main():
         sys.exit(1)
 
     for f in files:
-        dat_to_npz(f, output_dir)
+        convert_dat_to_npz(f, output_dir)
 
 
 if __name__ == "__main__":
