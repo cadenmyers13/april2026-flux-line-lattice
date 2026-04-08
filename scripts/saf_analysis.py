@@ -2,16 +2,21 @@ from saf_classifier.saf_classifier import SAFClassifier
 import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
+import argparse
 
 # from matplotlib.colors import LogNorm
 
 
 def main():
+    parser = argparse.ArgumentParser("Perform SAF analysis on a .npz file")
+    parser.add_argument("npz_file", help="Path to the .npz file to analyze")
+    args = parser.parse_args()
+
     npz_dir = Path(".").parent.parent / "data" / "npz"
     # npz_files = list(npz_dir.glob("*.npz"))
     # dp = np.load(npz_files[0])["data"]
-    numor = 157512  # 157722
-    numor_npz_file = npz_dir / f"GPSANS_0{numor}.npz"
+    # numor = 157512  # 157722
+    numor_npz_file = args.npz_file
     numor_dp = np.load(numor_npz_file)["data"]
     dp_shape = numor_dp.shape
 
@@ -25,7 +30,7 @@ def main():
         threshold=0,  # ignore this, this was for another analysis
     )
     masked_dp = sc.apply_annular_mask(
-        numor_dp, inner_radius=0, outer_radius=22, cx=cx, cy=cy - 1
+        numor_dp, inner_radius=0, outer_radius=30, cx=cx, cy=cy - 1
     )
     masked_norm_dp = sc.normalize_min_max(masked_dp)
     # saf = sc.symmetry_adapted_filter(0, dp_shape)
