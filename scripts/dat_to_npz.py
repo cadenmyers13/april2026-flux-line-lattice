@@ -5,6 +5,10 @@ This script converts .dat files containing SANS (Small Angle Neutron Scattering)
 into .npz files for easier handling and analysis in Python. The script supports processing 
 individual files, directories, wildcard patterns, or comma-separated lists of files.
 
+Data such as sample field and temperature are extracted from the metadata comments in the .dat files and
+appended to the end of file names. The appended info is the measured temp and field, not the set temp and
+field (ie, if you set the temp to 2.5K the metadata value might be 2.6K or something.)
+
 The .dat files are expected to contain metadata in the form of comments (lines starting with '#') 
 and numerical data in tabular format. Metadata is parsed and stored in the output .npz file 
 alongside the numerical data.
@@ -25,11 +29,6 @@ Arguments:
 Example:
     python dat_to_npz.py data/*.dat -o output/
 
-Dependencies:
-- numpy
-- argparse
-- pathlib
-- sys
 """
 
 
@@ -37,6 +36,8 @@ import numpy as np
 import argparse
 from pathlib import Path
 import sys
+import re
+
 
 
 # 5.3 x 4.1 mm pixel shape
@@ -65,6 +66,14 @@ def parse_dat(filepath):
             if not title_set:
                 metadata["title"] = meta_line
                 title_set = True
+
+                # Extract current from title if present
+                match = re.search(r"I=([-\d\.]+)\s*A", meta_line)
+                if match:
+                    metadata["current"] = float(match.group(1))
+                else:
+                    metadata["current"] = None
+
                 i += 1
                 continue
 
@@ -109,13 +118,15 @@ def convert_dat_to_npz(input_path, output_dir):
     # Extract and round values
     field = metadata.get("sample_field", None)
     temp = metadata.get("sample_temp", None)
+    current = metadata.get("current", None)
 
     if field is not None and temp is not None:
         field_str = f"{np.abs(field):.1f}"
         temp_str = f"{temp:.1f}"
-        suffix = f"_{field_str}T_{temp_str}K"
+        current_str = f"{current:.3f}A" if current is not None else "none"
+        suffix = f"_{field_str}T_{temp_str}K_{current_str}"
     else:
-        suffix = ""
+        suffix = "_none"
 
     output_path = output_dir / (input_path.stem + suffix + ".npz")
 
@@ -127,34 +138,6 @@ def convert_dat_to_npz(input_path, output_dir):
     )
     print(f"Saved {data.shape} array to {output_path}")
     return output_path
-
-
-def expand_inputs(input_arg):
-    """Expand a single input argument into a list of Path objects."""
-    paths = []
-    input_arg = input_arg.strip()
-
-    # Check for comma-separated list
-    if "," in input_arg:
-        for p in input_arg.split(","):
-            paths.extend(expand_inputs(p))
-        return paths
-
-    p = Path(input_arg)
-
-    # Directory: include all .dat files
-    if p.is_dir():
-        paths.extend(sorted(p.glob("*.dat")))
-    # Wildcard pattern: e.g., *.dat
-    elif "*" in input_arg or "?" in input_arg:
-        paths.extend(sorted(Path().glob(input_arg)))
-    # Single file
-    elif p.is_file():
-        paths.append(p)
-    else:
-        print(f"Warning: no files found for {input_arg}", file=sys.stderr)
-
-    return paths
 
 
 def main():
@@ -174,15 +157,12 @@ def main():
     )
     args = parser.parse_args()
     output_dir = Path(args.output_dir)
-    files = []
-    for inp in args.input:
-        files.extend(expand_inputs(inp))
-    if not files:
+    if not args.input:
         print(f"No valid files found for input: {args.input}", file=sys.stderr)
         sys.exit(1)
 
-    for f in files:
-        convert_dat_to_npz(f, output_dir)
+    for file in args.input:
+        convert_dat_to_npz(file, output_dir)
 
 
 if __name__ == "__main__":
