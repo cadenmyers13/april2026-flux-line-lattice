@@ -1,3 +1,26 @@
+"""
+This script provides functionality to visualize and compare data stored in two `.npz` files. 
+It generates a side-by-side plot where the left panel displays the data from the first file, 
+and the right panel shows the difference between the first and second files. Both plots use 
+a logarithmic color scale for better visualization of data spanning multiple orders of magnitude.
+
+Usage:
+    Run the script from the command line, providing the paths to two `.npz` files as arguments. 
+    Optionally, specify the minimum and maximum values for the logarithmic color scale.
+
+Example:
+    python subtract_numors_plotting.py file1.npz file2.npz --zmin 1 --zmax 1000
+
+Functions:
+    - load_data(npz_path): Loads the "data" array from a `.npz` file.
+    - plot_two_npz(file1, file2, zmin, zmax): Plots the data from two `.npz` files and their difference.
+    - main(): Parses command-line arguments and invokes the plotting function.
+
+Dependencies:
+    - numpy
+    - matplotlib
+"""
+
 import argparse
 import numpy as np
 from pathlib import Path

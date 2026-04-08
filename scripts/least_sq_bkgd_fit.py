@@ -1,5 +1,31 @@
-#!/usr/bin/env python3
+"""
+This script computes the least-squares scaling factor between two 2D datasets stored in `.npz` files 
+and visualizes the background-subtracted result. The scaling factor is calculated such that the 
+background dataset is scaled to best match the sample dataset in a least-squares sense.
 
+The script supports the following features:
+- Loading 2D arrays from `.npz` files.
+- Computing the scaling factor using least-squares minimization.
+- Subtracting the scaled background from the sample dataset.
+- Visualizing the background-subtracted result with optional log scaling and intensity limits.
+
+Usage:
+    python least_sq_bkgd_fit.py <sample.npz> <background.npz> [--zmin ZMIN] [--zmax ZMAX] [--log]
+
+Arguments:
+- `sample`: Path to the `.npz` file containing the sample dataset.
+- `background`: Path to the `.npz` file containing the background dataset.
+- `--zmin`: Minimum intensity value for plotting (optional).
+- `--zmax`: Maximum intensity value for plotting (optional).
+- `--log`: Use logarithmic scaling for the plot (optional).
+
+Example:
+    python least_sq_bkgd_fit.py sample.npz background.npz --zmin 0 --zmax 100 --log
+
+Dependencies:
+- numpy
+- matplotlib
+"""
 import argparse
 from pathlib import Path
 import numpy as np

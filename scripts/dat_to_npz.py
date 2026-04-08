@@ -1,3 +1,38 @@
+"""
+dat_to_npz.py
+
+This script converts .dat files containing SANS (Small Angle Neutron Scattering) detector data 
+into .npz files for easier handling and analysis in Python. The script supports processing 
+individual files, directories, wildcard patterns, or comma-separated lists of files.
+
+The .dat files are expected to contain metadata in the form of comments (lines starting with '#') 
+and numerical data in tabular format. Metadata is parsed and stored in the output .npz file 
+alongside the numerical data.
+
+Features:
+- Parses metadata and comments from .dat files.
+- Converts tabular data into NumPy arrays.
+- Supports batch processing of multiple files.
+- Saves output in .npz format with metadata and data arrays.
+
+Usage:
+    python dat_to_npz.py <input> [-o <output_dir>]
+
+Arguments:
+- <input>: Path(s) to .dat file(s), directory, wildcard pattern, or comma-separated list of files.
+- -o, --output-dir: Directory where the .npz files will be saved (default: current working directory).
+
+Example:
+    python dat_to_npz.py data/*.dat -o output/
+
+Dependencies:
+- numpy
+- argparse
+- pathlib
+- sys
+"""
+
+
 import numpy as np
 import argparse
 from pathlib import Path

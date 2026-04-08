@@ -1,3 +1,37 @@
+"""
+An interactive command line driven plotting tool for background subtraction of SANS data in npz format.
+
+This script provides an interactive tool for visualizing and analyzing the difference 
+between two 2D datasets stored in `.npz` files. The tool allows users to adjust the 
+scaling factor for the subtraction, set visualization limits, and inspect azimuthal 
+profiles interactively.
+
+Key Features:
+- Load two `.npz` files containing 2D data arrays and their metadata.
+- Subtract the second dataset (background) from the first (data) with an adjustable scale.
+- Visualize the difference using a 2D heatmap with either logarithmic or linear scaling.
+- Interactively adjust the subtraction scale and visualization limits using sliders.
+- Select the azimuthal center interactively by clicking on the heatmap.
+- Compute and display the azimuthal sum profile around the selected center.
+
+Usage:
+Run the script from the command line with the following arguments:
+    python background_subtraction_plotting.py <data_file.npz> <background_file.npz> [--linear]
+
+Arguments:
+- `data_file`: Path to the `.npz` file containing the data to be analyzed (minuend).
+- `bkgd`: Path to the `.npz` file containing the background data (subtrahend).
+- `--linear`: Optional flag to use linear scaling for visualization instead of logarithmic.
+
+Dependencies:
+- numpy
+- matplotlib
+
+Example:
+    python background_subtraction_plotting.py data.npz background.npz --linear
+"""
+
+
 import argparse
 import numpy as np
 from pathlib import Path
