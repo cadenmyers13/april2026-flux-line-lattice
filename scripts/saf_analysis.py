@@ -21,16 +21,16 @@ def main():
     dp_shape = numor_dp.shape
 
     cx = 94
-    cy = 118
+    cy = 117
     sc = SAFClassifier(
         resolution=10,
-        n_folds=6,
+        n_folds=1,
         cx=cx,
         cy=cy,
         threshold=0,  # ignore this, this was for another analysis
     )
     masked_dp = sc.apply_annular_mask(
-        numor_dp, inner_radius=0, outer_radius=30, cx=cx, cy=cy - 1
+        numor_dp, inner_radius=0, outer_radius=22, cx=cx, cy=cy - 1
     )
     masked_norm_dp = sc.normalize_min_max(masked_dp)
     # saf = sc.symmetry_adapted_filter(0, dp_shape)

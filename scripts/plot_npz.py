@@ -17,7 +17,7 @@ def plot_npz_file(npz_path: Path, zmin: float, zmax: float):
     plt.figure(figsize=(6, 5))
     data_norm = data + 1e-10  # Shift to avoid log(0)
     plt.imshow(
-        data_norm, cmap="jet", origin="lower", norm=LogNorm(vmin=zmin, vmax=zmax)
+        data_norm, cmap="viridis", origin="lower", norm=LogNorm(vmin=zmin, vmax=zmax)
     )
     plt.colorbar()
     plt.title(npz_path.name)

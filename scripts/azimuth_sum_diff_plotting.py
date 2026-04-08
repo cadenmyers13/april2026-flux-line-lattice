@@ -1,5 +1,4 @@
-"""
-azimuth_sum_diff_plotting.py
+"""azimuth_sum_diff_plotting.py.
 
 Plot the azimuthal sum of (datafile - scale*background) for one or more data files.
 
@@ -35,7 +34,8 @@ def build_profiles(data_list, bkgd, scale, cx, cy):
 
 
 def build_subtracted_avg_profiles(data_list, bkgd, scale, cx, cy):
-    """Calculate the profiles, find their average, then subtract that average from each profile."""
+    """Calculate the profiles, find their average, then subtract that average
+    from each profile."""
     profiles = build_profiles(data_list, bkgd, scale, cx, cy)
     avg_profile = np.mean([p for _, p in profiles], axis=0)
     subtracted_profiles = []
@@ -53,9 +53,7 @@ def interactive_az_plot(data_files, bkgd_file, cx, cy, use_subtracted=False):
     for f in data_files:
         d = load_data(f)
         if d.shape != bkgd.shape:
-            raise ValueError(
-                f"Shape mismatch: {f.name} {d.shape} vs bkgd {bkgd.shape}"
-            )
+            raise ValueError(f"Shape mismatch: {f.name} {d.shape} vs bkgd {bkgd.shape}")
         data_list.append(d)
 
     labels = [Path(f).stem for f in data_files]
@@ -69,9 +67,7 @@ def interactive_az_plot(data_files, bkgd_file, cx, cy, use_subtracted=False):
 
     ax.set_xlabel("Radius (pixels)")
     ax.set_ylabel("Azimuthal Sum")
-    ax.set_title(
-        f"Azimuthal Sum (data − scale·bkgd), centre = ({cx}, {cy})"
-    )
+    ax.set_title(f"Azimuthal Sum (data − scale·bkgd), centre = ({cx}, {cy})")
     ax.grid(True, alpha=0.3)
 
     # ── Initial profiles ──────────────────────────────────────────────────────
@@ -100,22 +96,16 @@ def interactive_az_plot(data_files, bkgd_file, cx, cy, use_subtracted=False):
     )
 
     ax_yspace = plt.axes([0.15, 0.05, 0.70, 0.04])
-    slider_yspace = Slider(
-        ax_yspace, "Y Spacing", 0.0, 500, valinit=0.0
-    )
+    slider_yspace = Slider(ax_yspace, "Y Spacing", 0.0, 500, valinit=0.0)
 
     def update(_):
         scale = slider_scale.val
         yspace = slider_yspace.val
 
         if use_subtracted:
-            new_profiles = build_subtracted_avg_profiles(
-                data_list, bkgd, scale, cx, cy
-            )
+            new_profiles = build_subtracted_avg_profiles(data_list, bkgd, scale, cx, cy)
         else:
-            new_profiles = build_profiles(
-                data_list, bkgd, scale, cx, cy
-            )
+            new_profiles = build_profiles(data_list, bkgd, scale, cx, cy)
 
         for i, (ln, (radii, profile)) in enumerate(zip(lines, new_profiles)):
             ln.set_xdata(radii)

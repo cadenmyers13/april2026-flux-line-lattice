@@ -1,7 +1,7 @@
-"""
-This script computes the least-squares scaling factor between two 2D datasets stored in `.npz` files 
-and visualizes the background-subtracted result. The scaling factor is calculated such that the 
-background dataset is scaled to best match the sample dataset in a least-squares sense.
+"""This script computes the least-squares scaling factor between two 2D
+datasets stored in `.npz` files and visualizes the background-subtracted
+result. The scaling factor is calculated such that the background dataset is
+scaled to best match the sample dataset in a least-squares sense.
 
 The script supports the following features:
 - Loading 2D arrays from `.npz` files.
@@ -26,6 +26,7 @@ Dependencies:
 - numpy
 - matplotlib
 """
+
 import argparse
 from pathlib import Path
 import numpy as np
@@ -62,8 +63,12 @@ def main():
     )
     parser.add_argument("sample", type=Path, help="Path to sample .npz file")
     parser.add_argument("background", type=Path, help="Path to background .npz file")
-    parser.add_argument("--zmin", type=float, default=None, help="Minimum intensity for plotting")
-    parser.add_argument("--zmax", type=float, default=None, help="Maximum intensity for plotting")
+    parser.add_argument(
+        "--zmin", type=float, default=None, help="Minimum intensity for plotting"
+    )
+    parser.add_argument(
+        "--zmax", type=float, default=None, help="Maximum intensity for plotting"
+    )
     parser.add_argument("--log", action="store_true", help="Use log scale for plotting")
     args = parser.parse_args()
 

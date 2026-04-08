@@ -1,9 +1,9 @@
-"""
-An interactive command line driven plotting tool for background subtraction of SANS data in npz format.
+"""An interactive command line driven plotting tool for background subtraction
+of SANS data in npz format.
 
-This script provides an interactive tool for visualizing and analyzing the difference 
-between two 2D datasets stored in `.npz` files. The tool allows users to adjust the 
-scaling factor for the subtraction, set visualization limits, and inspect azimuthal 
+This script provides an interactive tool for visualizing and analyzing the difference
+between two 2D datasets stored in `.npz` files. The tool allows users to adjust the
+scaling factor for the subtraction, set visualization limits, and inspect azimuthal
 profiles interactively.
 
 Key Features:
@@ -31,7 +31,6 @@ Example:
     python background_subtraction_plotting.py data.npz background.npz --linear
 """
 
-
 import argparse
 import numpy as np
 from pathlib import Path
@@ -46,7 +45,10 @@ def load_data(npz_path: Path):
 
 
 def calculate_azimuthal_sum(data, cx, cy, max_radius=None):
-    """Compute azimuthal sum about (cx, cy). Returns (radii, summed_values)."""
+    """Compute azimuthal sum about (cx, cy).
+
+    Returns (radii, summed_values).
+    """
     ny, nx = data.shape
     if max_radius is None:
         max_radius = int(np.hypot(max(cx, nx - cx), max(cy, ny - cy))) + 1
@@ -77,10 +79,10 @@ def interactive_plot(data_file: Path, bkgd: Path, log=True):
     # Initial values
     scale0 = 0.0
     zmin0 = 1.0
-    zmax0 = 10 ** 2
+    zmax0 = 10**2
 
     # Initial azimuthal center (image center)
-    center = (94, 117)# [nx // 2, ny // 2]  # [cx, cy]
+    center = (94, 117)  # [nx // 2, ny // 2]  # [cx, cy]
 
     fig, (ax_2d, ax_az) = plt.subplots(1, 2, figsize=(13, 5))
     plt.subplots_adjust(bottom=0.35, wspace=0.35)
@@ -92,7 +94,7 @@ def interactive_plot(data_file: Path, bkgd: Path, log=True):
         return np.clip(d, 1e-12, None) if log else d
 
     diff = compute_diff(scale0)
-    im = ax_2d.imshow(get_plot_data(diff), cmap="jet", origin="lower")
+    im = ax_2d.imshow(get_plot_data(diff), cmap="viridis", origin="lower")
     cbar = plt.colorbar(im, ax=ax_2d)
     cbar.set_label("Difference (log)" if log else "Difference (linear)")
     ax_2d.set_title(f"{data_file.stem} - bkgd")
@@ -112,17 +114,17 @@ def interactive_plot(data_file: Path, bkgd: Path, log=True):
 
     # Sliders
     ax_scale = plt.axes([0.15, 0.22, 0.7, 0.03])
-    ax_zmin  = plt.axes([0.15, 0.16, 0.7, 0.03])
-    ax_zmax  = plt.axes([0.15, 0.10, 0.7, 0.03])
+    ax_zmin = plt.axes([0.15, 0.16, 0.7, 0.03])
+    ax_zmax = plt.axes([0.15, 0.10, 0.7, 0.03])
 
     slider_scale = Slider(ax_scale, "Scale", 0.0, 2.0, valinit=scale0, valstep=0.001)
 
     if log:
-        slider_zmin = Slider(ax_zmin, "zmin", 0.001, 5,        valinit=zmin0)
-        slider_zmax = Slider(ax_zmax, "zmax", 10,   5 * 10**2, valinit=zmax0)
+        slider_zmin = Slider(ax_zmin, "zmin", 0.001, 5, valinit=zmin0)
+        slider_zmax = Slider(ax_zmax, "zmax", 10, 5 * 10**2, valinit=zmax0)
     else:
         slider_zmin = Slider(ax_zmin, "zmin", -1000, 1000, valinit=0.0)
-        slider_zmax = Slider(ax_zmax, "zmax",     0, 1000, valinit=800.0)
+        slider_zmax = Slider(ax_zmax, "zmax", 0, 10, valinit=800.0)
 
     def refresh_az(diff_data):
         cx, cy = center
@@ -135,8 +137,8 @@ def interactive_plot(data_file: Path, bkgd: Path, log=True):
 
     def update(_):
         scale = slider_scale.val
-        zmin  = slider_zmin.val
-        zmax  = slider_zmax.val
+        zmin = slider_zmin.val
+        zmax = slider_zmax.val
         if zmax <= zmin:
             return
 
@@ -149,7 +151,7 @@ def interactive_plot(data_file: Path, bkgd: Path, log=True):
             im.set_clim(vmin=zmin, vmax=zmax)
 
         im.set_data(plot_data)
-        ax_2d.set_title(f"Scale = {scale:.3f}")
+        ax_2d.set_title(f"{data_file.stem} - bkgd")
         refresh_az(diff)
         fig.canvas.draw_idle()
 
@@ -183,14 +185,14 @@ def interactive_plot(data_file: Path, bkgd: Path, log=True):
 def main():
     parser = argparse.ArgumentParser(description="Interactive subtraction with sliders")
     parser.add_argument("data_file", help="Minuend (.npz)")
-    parser.add_argument("bkgd",      help="Subtrahend (.npz)")
+    parser.add_argument("bkgd", help="Subtrahend (.npz)")
     parser.add_argument(
         "--linear", action="store_true", help="Use linear scale instead of log"
     )
     args = parser.parse_args()
 
     data_file = Path(args.data_file)
-    bkgd      = Path(args.bkgd)
+    bkgd = Path(args.bkgd)
 
     data_file_metadata = np.load(data_file, allow_pickle=True)["metadata"].item()
     print(f"metadata for {data_file.stem}:")

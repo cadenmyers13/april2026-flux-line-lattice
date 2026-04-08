@@ -1,11 +1,11 @@
-"""
-This script provides functionality to visualize and compare data stored in two `.npz` files. 
-It generates a side-by-side plot where the left panel displays the data from the first file, 
-and the right panel shows the difference between the first and second files. Both plots use 
-a logarithmic color scale for better visualization of data spanning multiple orders of magnitude.
+"""This script provides functionality to visualize and compare data stored in
+two `.npz` files. It generates a side-by-side plot where the left panel
+displays the data from the first file, and the right panel shows the difference
+between the first and second files. Both plots use a logarithmic color scale
+for better visualization of data spanning multiple orders of magnitude.
 
 Usage:
-    Run the script from the command line, providing the paths to two `.npz` files as arguments. 
+    Run the script from the command line, providing the paths to two `.npz` files as arguments.
     Optionally, specify the minimum and maximum values for the logarithmic color scale.
 
 Example:

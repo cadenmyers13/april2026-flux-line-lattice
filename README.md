@@ -6,5 +6,5 @@ To run the `scripts/saf_analysis.py` you must install `saf-classifier` into your
 Do this by running from the top level dir,
 
 ```
-pip install saf-classifier
+pip install saf-classifier/
 ```

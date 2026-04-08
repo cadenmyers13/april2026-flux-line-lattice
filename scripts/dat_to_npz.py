@@ -1,16 +1,15 @@
-"""
-dat_to_npz.py
+"""dat_to_npz.py.
 
-This script converts .dat files containing SANS (Small Angle Neutron Scattering) detector data 
-into .npz files for easier handling and analysis in Python. The script supports processing 
+This script converts .dat files containing SANS (Small Angle Neutron Scattering) detector data
+into .npz files for easier handling and analysis in Python. The script supports processing
 individual files, directories, wildcard patterns, or comma-separated lists of files.
 
 Data such as sample field and temperature are extracted from the metadata comments in the .dat files and
 appended to the end of file names. The appended info is the measured temp and field, not the set temp and
 field (ie, if you set the temp to 2.5K the metadata value might be 2.6K or something.)
 
-The .dat files are expected to contain metadata in the form of comments (lines starting with '#') 
-and numerical data in tabular format. Metadata is parsed and stored in the output .npz file 
+The .dat files are expected to contain metadata in the form of comments (lines starting with '#')
+and numerical data in tabular format. Metadata is parsed and stored in the output .npz file
 alongside the numerical data.
 
 Features:
@@ -28,16 +27,13 @@ Arguments:
 
 Example:
     python dat_to_npz.py data/*.dat -o output/
-
 """
-
 
 import numpy as np
 import argparse
 from pathlib import Path
 import sys
 import re
-
 
 
 # 5.3 x 4.1 mm pixel shape
@@ -131,11 +127,7 @@ def convert_dat_to_npz(input_path, output_dir):
     output_path = output_dir / (input_path.stem + suffix + ".npz")
 
     comments = np.array(metadata.get("comments", []))
-    np.savez(
-        output_path,
-        data=data,
-        metadata=np.array(metadata, dtype=object)
-    )
+    np.savez(output_path, data=data, metadata=np.array(metadata, dtype=object))
     print(f"Saved {data.shape} array to {output_path}")
     return output_path
 
