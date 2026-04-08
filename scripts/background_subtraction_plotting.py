@@ -61,7 +61,7 @@ def interactive_plot(data_file: Path, bkgd: Path, log=True):
     im = ax_2d.imshow(get_plot_data(diff), cmap="jet", origin="lower")
     cbar = plt.colorbar(im, ax=ax_2d)
     cbar.set_label("Difference (log)" if log else "Difference (linear)")
-    ax_2d.set_title(f"Scale = {scale0:.3f}")
+    ax_2d.set_title(f"{data_file.stem} - bkgd")
 
     # Red X marker for azimuthal center
     (center_marker,) = ax_2d.plot(
